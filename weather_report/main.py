@@ -113,9 +113,9 @@ def get_month_avg_report(data,r_year,r_month)->None:
             sum_highest_temp+=row['Max TemperatureC']
             sum_lowest_temp+=row['Min TemperatureC']
             sum_mean_humidity+=row['Mean Humidity']
-    avg_highest_temp=sum_highest_temp/month_length
-    avg_lowest_temp=sum_lowest_temp/month_length
-    avg_mean_humidity=sum_mean_humidity/month_length
+    avg_highest_temp=round(sum_highest_temp/month_length,1)
+    avg_lowest_temp=round(sum_lowest_temp/month_length,1)
+    avg_mean_humidity=round(sum_mean_humidity/month_length,1)
     print(f"Highest Average: {avg_highest_temp}C")
     print(f"Lowest Average: {avg_lowest_temp}C")
     print(f"Average Mean Humidity: {avg_mean_humidity}%")
