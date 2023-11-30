@@ -6,22 +6,22 @@ from utils import year_boundary_check
 
 
 class ReportGenerator:
-    """Displays weather reports
-    """
+    """Displays weather reports"""
+
     _weather_man: WeatherMan
 
     def __init__(self) -> None:
         self._weather_man = WeatherMan()
 
     def yearly_extremes_report(self, year: int) -> None:
-        """Prints year extreme values
-        """
+        """Prints year extreme values"""
         print(f"\n=== Report for Year {year} === ")
         if year_boundary_check(year):
-            (highest_temp_record,
-             lowest_temp_record,
-             highest_humidity_record
-             ) = self._weather_man.get_year_extremes(year)
+            (
+                highest_temp_record,
+                lowest_temp_record,
+                highest_humidity_record,
+            ) = self._weather_man.get_year_extremes(year)
 
             print(
                 f'Highest:{highest_temp_record.max_temp}C on \
@@ -39,15 +39,15 @@ class ReportGenerator:
             print("No data for this year exists")
 
     def monthly_avg_report(self, year_month: str) -> None:
-        """ Prints month average values
-        """
+        """Prints month average values"""
         try:
             print(f"\n=== Report for {year_month} === ")
-            date = datetime.strptime(year_month, '%Y/%m')
-            (highest_temp_avg,
-             lowest_temp_avg,
-             mean_humidity_avg
-             ) = self._weather_man.get_month_avg(date.year, date.month)
+            date = datetime.strptime(year_month, "%Y/%m")
+            (
+                highest_temp_avg,
+                lowest_temp_avg,
+                mean_humidity_avg,
+            ) = self._weather_man.get_month_avg(date.year, date.month)
 
             print(f"Highest Temperature Average: {highest_temp_avg}C")
             print(f"Lowest Temperature Average: {lowest_temp_avg}C")
@@ -56,13 +56,11 @@ class ReportGenerator:
             print("Enter date in the correct format - yyyy/mm")
 
     def daily_month_report(self, year_month: str) -> None:
-        """Print each day max and min temps with bars
-        """
+        """Print each day max and min temps with bars"""
         try:
             print(f"\n=== Report for {year_month} ===")
-            date = datetime.strptime(year_month, '%Y/%m')
-            weather_data = self._weather_man.get_month_data(date.year,
-                                                            date.month)
+            date = datetime.strptime(year_month, "%Y/%m")
+            weather_data = self._weather_man.get_month_data(date.year, date.month)
 
             if weather_data:
                 RESET = "\033[0m"
@@ -71,8 +69,8 @@ class ReportGenerator:
                 for record in weather_data:
                     min_temp = record.min_temp
                     max_temp = record.max_temp
-                    low_temp_str = ''
-                    high_temp_str = ''
+                    low_temp_str = ""
+                    high_temp_str = ""
                     if max_temp:
                         high_temp_str = RED
                         for _ in range(max_temp):
@@ -96,4 +94,3 @@ class ReportGenerator:
 
         except ValueError as _:
             print("Enter date in the correct format - yyyy/mm")
-

@@ -13,13 +13,10 @@ def year_boundary_check(year: int) -> bool:
 
 
 def int_(num: str) -> int:
-    """Convert string to int while checking for null
-    """
+    """Convert string to int while checking for null"""
     return int(num) if num else 0
 
 
 def float_(num: str) -> float:
-    """Convert string to float while checking for null
-    """
+    """Convert string to float while checking for null"""
     return float(num) if num else 0.0
-

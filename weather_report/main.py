@@ -6,14 +6,10 @@ from report_generator import ReportGenerator
 
 
 def main() -> None:
-    """Call respective functions based on inputs
-    """
+    """Call respective functions based on inputs"""
     parser = argparse.ArgumentParser(description="Weather Report file")
     parser.add_argument(
-        "-e",
-        "--year",
-        type=int,
-        help="Takes year as input for year report"
+        "-e", "--year", type=int, help="Takes year as input for year report"
     )
     parser.add_argument(
         "-a",
@@ -37,5 +33,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-
