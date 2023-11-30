@@ -1,1 +1,4 @@
 **/.DS_Store
+**/weatherfiles
+**/env
+**/__pycache__
