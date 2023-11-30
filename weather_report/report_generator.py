@@ -1,8 +1,9 @@
 """Responsible for displaying all weather reports
 """
 from datetime import datetime
-from weather_man import WeatherMan
+
 from utils import year_boundary_check
+from weather_man import WeatherMan
 
 
 class ReportGenerator:

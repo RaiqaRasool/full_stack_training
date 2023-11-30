@@ -1,7 +1,8 @@
 """Contains the class that represents each record of data
 """
 from datetime import datetime
-from utils import int_, float_
+
+from utils import float_, int_
 
 
 class WeatherRecord:

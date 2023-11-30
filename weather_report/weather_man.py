@@ -2,8 +2,8 @@
    Has class that handle all data related functions
 """
 import csv
-from typing import List, Dict, Tuple
 import os
+from typing import Dict, List, Tuple
 
 from weather_record import WeatherRecord
 
