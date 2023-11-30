@@ -20,3 +20,4 @@ class WeatherRecord:
         self.mean_temp = int_(record_data["Mean TemperatureC"])
         self.max_humidity = float_(record_data["Max Humidity"])
         self.mean_humidity = float_(record_data[" Mean Humidity"])
+

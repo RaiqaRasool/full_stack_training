@@ -100,3 +100,4 @@ class WeatherMan:
                 round(sum_lowest_temp / month_length, 1),
                 round(sum_mean_humidity / month_length, 1)
             )
+

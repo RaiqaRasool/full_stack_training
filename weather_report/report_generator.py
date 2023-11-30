@@ -96,3 +96,4 @@ class ReportGenerator:
 
         except ValueError as _:
             print("Enter date in the correct format - yyyy/mm")
+
