@@ -2,14 +2,16 @@
 """
 
 
-def year_boundary_check(year: int) -> bool:
-    """
-    Return true if year is between 2004 and 2016
-    and false otherwise
-    """
-    if year and 2004 <= year <= 2016:
-        return True
-    return False
+def value_error_decorator(func):
+    """Wrap function in value error try-except block"""
+
+    def wrapper(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+        except ValueError as e:
+            print(f"Error: {e}")
+
+    return wrapper
 
 
 def int_(num: str) -> int:

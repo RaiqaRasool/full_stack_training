@@ -1,6 +1,7 @@
 """main.py
 """
 import argparse
+from datetime import datetime
 
 from report_generator import ReportGenerator
 
@@ -9,20 +10,32 @@ def main() -> None:
     """Call respective functions based on inputs"""
     parser = argparse.ArgumentParser(description="Weather Report file")
     parser.add_argument(
-        "-e", "--year", type=int, help="Takes year as input for year report"
+        "-d",
+        "--data_folder",
+        required=True,
+        type=str,
+        help="Data folder name",
+    )
+    parser.add_argument(
+        "-e",
+        "--year",
+        type=lambda x: datetime.strptime(x, "%Y"),
+        help="Year for year report",
     )
     parser.add_argument(
         "-a",
         "--month",
-        help="Year and month to generate month average report",
+        type=lambda x: datetime.strptime(x, "%Y/%m"),
+        help="Year and month in format yyyy/mm to generate month average report",
     )
     parser.add_argument(
         "-c",
         "--year_month",
-        help="Year and month to generate daily report of month with bars",
+        type=lambda x: datetime.strptime(x, "%Y/%m"),
+        help="Year and month in format yyyy/mm to generate daily report of month with bars",
     )
     args = parser.parse_args()
-    report_generator = ReportGenerator()
+    report_generator = ReportGenerator(args.data_folder)
     if args.year:
         report_generator.yearly_extremes_report(args.year)
     if args.month:

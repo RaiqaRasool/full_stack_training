@@ -9,7 +9,7 @@ class WeatherRecord:
     """Class type for each data record object"""
 
     def __init__(self, record_data: dict[str, str]) -> None:
-        date = record_data["PKT"] or record_data["PKST"]
+        date = record_data.get("PKT") or record_data.get("PKST")
         self.date = datetime.strptime(date, "%Y-%m-%d")
         self.max_temp = int_(record_data["Max TemperatureC"])
         self.min_temp = int_(record_data["Min TemperatureC"])
