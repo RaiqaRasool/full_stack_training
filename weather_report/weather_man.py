@@ -5,7 +5,7 @@ import csv
 import os
 from datetime import datetime
 from statistics import mean
-from typing import List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from weather_record import WeatherRecord
 
@@ -13,17 +13,19 @@ from weather_record import WeatherRecord
 class WeatherMan:
     """Class responsible for handling all functions on weather data"""
 
-    def __init__(self, folder_name: str) -> None:
-        self._weather_records: List[WeatherRecord] = []
-        weather_data_dir = os.path.join(os.path.dirname(__file__), folder_name)
-        data_files = list(os.listdir(weather_data_dir))
+    def __init__(self, data_dir: str) -> None:
+        self._weather_records: Dict[int, Dict[int, Dict[int, WeatherRecord]]] = {}
+        data_dir_path = os.path.join(os.path.dirname(__file__), data_dir)
+        data_files = list(os.listdir(data_dir_path))
         for file_path in data_files:
-            with open(
-                os.path.join(weather_data_dir, file_path), "r", encoding="latin-1"
-            ) as f:
+            with open(os.path.join(data_dir_path, file_path), "r", encoding="latin-1") as f:
                 csv_reader = csv.DictReader(x.replace("\0", "") for x in f)
                 for record in csv_reader:
-                    self._weather_records.append(WeatherRecord(record))
+                    weather_record = WeatherRecord(record)
+                    year = weather_record.date.year
+                    month = weather_record.date.month
+                    day = weather_record.date.day
+                    self._weather_records.setdefault(year, {}).setdefault(month, {})[day] = weather_record
 
     def filter_data(
         self,
@@ -34,45 +36,29 @@ class WeatherMan:
         """Filter weather data based on the given date and filtration level.
         The filtration level can be specified as 'day', 'year', or by default it is
         'month of a year'."""
-
-        def day_filter(curr: datetime, target: datetime) -> bool:
-            return (curr.day, curr.month, curr.year) == (
-                target.day,
-                target.month,
-                target.year,
-            )
-
-        def month_filter(curr: datetime, target: datetime) -> bool:
-            return (curr.month, curr.year) == (target.month, target.year)
-
-        def year_filter(curr: datetime, target: datetime) -> bool:
-            return curr.year == target.year
+        day = target_date.day
+        month = target_date.month
+        year = target_date.year
 
         if by_day:
-            filter_ = day_filter
+            filtered_data = [
+                self._weather_records[year][month][day],
+            ]
         elif by_year:
-            filter_ = year_filter
+            filtered_data = [day for month in self._weather_records[year].values() for day in month.values()]
         else:
-            filter_ = month_filter
+            filtered_data = list(self._weather_records[year][month].values())
 
-        data = list(
-            filter(
-                lambda record: filter_(record.date, target_date),
-                self._weather_records,
-            )
-        )
+        return filtered_data
 
-        return data
-
-    def get_year_extremes(
-        self, year_date: datetime
-    ) -> Tuple[WeatherRecord, WeatherRecord, WeatherRecord]:
+    def get_year_extremes(self, year_date: datetime) -> Tuple[WeatherRecord, WeatherRecord, WeatherRecord]:
         """Return max and min values of temp and max of humidity
         for given year
         """
         year_data = self.filter_data(year_date, by_year=True)
         if not year_data:
             raise ValueError(f"No data available for year {year_date.strftime('%Y')}")
+
         return (
             max(year_data, key=lambda record: record.max_temp),
             min(year_data, key=lambda record: record.min_temp),
@@ -85,9 +71,7 @@ class WeatherMan:
         """
         month_data = self.filter_data(date)
         if not month_data:
-            raise ValueError(
-                f"No data available for the {date.month} month of {date.year}"
-            )
+            raise ValueError(f"No data available for the {date.month} month of {date.year}")
 
         return (
             round(mean(record.max_temp for record in month_data), 1),
