@@ -34,22 +34,26 @@ class WeatherMan:
     def filter_data(
         self,
         target_date: datetime,
+        by_day: Optional[bool] = False,
         by_year: Optional[bool] = False,
     ) -> List[WeatherRecord]:
         """Filter weather data based on the given date and filtration level.
         The filtration level can be specified as 'day', 'year', or by default it is
         'month of a year'."""
-        day = target_date.day
         month = target_date.month
         year = target_date.year
 
         if by_year:
+            if not year in self._weather_records:
+                return []
             filtered_data = [
                 day
                 for month in self._weather_records[year].values()
                 for day in month.values()
             ]
         else:
+            if not year in self._weather_records or not month in self._weather_records[year]:
+                return []
             filtered_data = list(self._weather_records[year][month].values())
 
         return filtered_data
