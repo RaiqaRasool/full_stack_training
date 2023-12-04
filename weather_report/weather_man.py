@@ -42,19 +42,14 @@ class WeatherMan:
         'month of a year'."""
         month = target_date.month
         year = target_date.year
-
         if by_year:
-            if not year in self._weather_records:
-                return []
             filtered_data = [
                 day
-                for month in self._weather_records[year].values()
+                for month in self._weather_records.get(year, {}).values()
                 for day in month.values()
             ]
         else:
-            if not year in self._weather_records or not month in self._weather_records[year]:
-                return []
-            filtered_data = list(self._weather_records[year][month].values())
+            filtered_data = list(self._weather_records.get(year,{}).get(month,{}).values())
 
         return filtered_data
 

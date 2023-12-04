@@ -67,3 +67,6 @@ Write an application that generates the following reports.
     01 ++++++++++++++++++++++++++++++++++++ 11C - 25C
     02 ++++++++++++++++++++++++++++++ 08C - 22C
     ```
+
+### **Requirements**
+Python version: `3.9.13`
