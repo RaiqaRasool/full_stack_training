@@ -11,9 +11,9 @@ class A6pmSpider(CrawlSpider):
     data = {}
 
     rules = (
-        Rule(LinkExtractor(restrict_css = '[data-sub-nav="true"] a.fi-z')),
+        Rule(LinkExtractor(restrict_css='[data-sub-nav="true"] a.fi-z')),
         Rule(LinkExtractor(restrict_css='[id="searchPagination"] a'), follow=True),
-        Rule(LinkExtractor(restrict_css = '[id="products"] a[itemprop="url"]'), callback="parse_item"),
+        Rule(LinkExtractor(restrict_css='[id="products"] a[itemprop="url"]'), callback="parse_item"),
     )
 
     def parse_item(self, response):
@@ -36,7 +36,6 @@ class A6pmSpider(CrawlSpider):
         }
         self.data[retailer_sku] = item_dict
         yield item_dict
-
 
     def extract_retailer_sku(self, response):
         sku_id = response.css("div[itemprop='description'] div.uV-z ul li:nth-child(2) span::text").get()
