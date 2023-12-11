@@ -8,26 +8,20 @@ class A6pmSpider(CrawlSpider):
     name = "6pm"
     allowed_domains = ["www.6pm.com"]
     start_urls = ["https://www.6pm.com/"]
+    data = {}
 
     rules = (
-        Rule(LinkExtractor(allow=["women", "men", "girls", "boys"], deny="product")),
-        Rule(LinkExtractor(allow="product"), callback="parse_item"),
+        Rule(LinkExtractor(restrict_css = '[data-sub-nav="true"] a.fi-z')),
+        Rule(LinkExtractor(restrict_css='[id="searchPagination"] a'), follow=True),
+        Rule(LinkExtractor(restrict_css = '[id="products"] a[itemprop="url"]'), callback="parse_item"),
     )
 
-    custom_settings = {
-        "CONCURRENT_REQUESTS": 16,
-        "CONCURRENT_ITEMS": 100,
-        "DOWNLOAD_DELAY": 0.5,
-        "AUTOTHROTTLE_ENABLED": True,
-        "AUTOTHROTTLE_START_DELAY": 1,
-    }
-
     def parse_item(self, response):
-        yield self.extract_item_data(response)
-
-    def extract_item_data(self, response):
+        retailer_sku = self.extract_retailer_sku(response)
+        if retailer_sku in self.data:
+            return
         item_dict = {
-            "retailer_sku": response.css("div[itemprop='description'] div.uV-z ul li:nth-child(2) span::text").get(),
+            "retailer_sku": self.extract_retailer_sku(response),
             "gender": self.extract_item_gender(response),
             "brand": {
                 "name": response.css("div#breadcrumbs div a:last-child span::text").get(),
@@ -40,7 +34,13 @@ class A6pmSpider(CrawlSpider):
             "currency": response.css("span.fu-z.iu-z span:first-child span:first-child::attr(content)").get(),
             "skus": self.extract_item_skus(response),
         }
-        return item_dict
+        self.data[retailer_sku] = item_dict
+        yield item_dict
+
+
+    def extract_retailer_sku(self, response):
+        sku_id = response.css("div[itemprop='description'] div.uV-z ul li:nth-child(2) span::text").get()
+        return sku_id
 
     def extract_item_gender(self, response) -> str:
         keywords = response.css('meta[name="keywords"]::attr(content)').get()
