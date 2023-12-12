@@ -86,3 +86,4 @@ class A6pmSpider(CrawlSpider):
                     "image_urls": image_urls,
                 }
         return skus_dict
+
