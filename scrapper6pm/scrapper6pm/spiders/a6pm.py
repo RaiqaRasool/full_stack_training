@@ -8,7 +8,7 @@ class A6pmSpider(CrawlSpider):
     name = "6pm"
     allowed_domains = ["www.6pm.com"]
     start_urls = ["https://www.6pm.com/"]
-    data = {}
+    data_skus = set()
 
     rules = (
         Rule(LinkExtractor(restrict_css='[data-sub-nav="true"] a.fi-z')),
@@ -18,9 +18,9 @@ class A6pmSpider(CrawlSpider):
 
     def parse_item(self, response):
         retailer_sku = self.extract_retailer_sku(response)
-        if retailer_sku in self.data:
+        if retailer_sku in self.data_skus:
             return
-        item_dict = {
+        item_data = {
             "retailer_sku": self.extract_retailer_sku(response),
             "gender": self.extract_item_gender(response),
             "brand": {
@@ -34,8 +34,8 @@ class A6pmSpider(CrawlSpider):
             "currency": response.css("span.fu-z.iu-z span:first-child span:first-child::attr(content)").get(),
             "skus": self.extract_item_skus(response),
         }
-        self.data[retailer_sku] = item_dict
-        yield item_dict
+        self.data_skus.add(retailer_sku)
+        yield item_data
 
     def extract_retailer_sku(self, response):
         sku_id = response.css("div[itemprop='description'] div.uV-z ul li:nth-child(2) span::text").get()
@@ -61,7 +61,7 @@ class A6pmSpider(CrawlSpider):
 
     def extract_item_skus(self, response) -> dict:
         initial_state_str = response.xpath('//script[contains(., "window.__INITIAL_STATE__")]/text()').get()[27:-1]
-        skus_dict = {}
+        skus_data = {}
         initial_state_json = json.loads(initial_state_str)
         product_json = initial_state_json.get("product").get("detail")
         color_versions = product_json.get("styles")
@@ -69,14 +69,12 @@ class A6pmSpider(CrawlSpider):
             color = color_version.get("color")
             skus = color_version.get("stocks")
             images = color_version.get("images")
-            image_urls = []
-            for image in images:
-                image_urls.append(f'https://m.media-amazon.com/images/I/{image["imageId"]}._AC_SR146,116_.jpg')
+            image_urls = [f'https://m.media-amazon.com/images/I/{image["imageId"]}._AC_SR146,116_.jpg' for image in images]
             for sku in skus:
                 size = sku.get("size")
                 sku_key = f"{size}_{color}"
-                out_of_stock = True if int(sku.get("onHand")) > 0 else False
-                skus_dict[sku_key] = {
+                out_of_stock = int(sku.get("onHand")) <= 0
+                skus_data[sku_key] = {
                     "sku_id": sku.get("stockId"),
                     "size": size,
                     "color": color,
@@ -85,5 +83,5 @@ class A6pmSpider(CrawlSpider):
                     "out_of_stock": out_of_stock,
                     "image_urls": image_urls,
                 }
-        return skus_dict
+        return skus_data
 
