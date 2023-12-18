@@ -42,6 +42,6 @@ class ProductColorSize(models.Model):
     color = models.ForeignKey(ProductColor, on_delete=models.CASCADE, related_name="sizes")
 
 
-class ProdColorImage(models.Model):
+class ProductColorImage(models.Model):
     image = models.URLField()
     color = models.ForeignKey(ProductColor, on_delete=models.CASCADE, related_name='images')
