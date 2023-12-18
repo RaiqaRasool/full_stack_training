@@ -36,8 +36,7 @@ class A6pmSpider(CrawlSpider):
         yield item_data
 
     def extract_retailer_sku(self, response):
-        retailer_sku = response.css('span[itemprop="sku"]::text').get()
-        return retailer_sku
+        return response.css('span[itemprop="sku"]::text').get()
 
     def extract_item_gender(self, response) -> str:
         keywords = response.css('meta[name="keywords"]::attr(content)').get().lower()
@@ -75,20 +74,14 @@ class A6pmSpider(CrawlSpider):
 
         for color_version in color_versions:
             color = color_version.get("color")
-            size_versions = color_version.get("stocks")
+            raw_size_variants = color_version.get("stocks")
             images = color_version.get("images")
             image_urls = [
                 f'https://m.media-amazon.com/images/I/{image["imageId"]}._AC_SR146,116_.jpg' for image in images
             ]
-            skus_data[color] = {"image_urls": image_urls, "size_versions": {}}
-            for size_version in size_versions:
-                size = size_version.get("size")
-                out_of_stock = int(size_version.get("onHand")) <= 0
-                skus_data[color]["size_versions"][size] = {
-                    "sku_id": size_version.get("stockId"),
-                    "price": size_version.get("price").replace("$", ""),
-                    "previous_price": size_version.get("originalPrice").replace("$", ""),
-                    "out_of_stock": out_of_stock,
+            skus_data[color] = {
+                "image_urls": image_urls,
+                "size_versions": self.get_size_variants(raw_size_variants)
                 }
         return skus_data
 
@@ -97,3 +90,15 @@ class A6pmSpider(CrawlSpider):
             return True
 
         self.scrapped_retailer_skus.add(retailer_sku)
+
+    def get_size_variants(self, raw_size_variants) -> list[dict]:
+        size_variants = []
+        for size_map in raw_size_variants:
+            size_variants.append({
+                "size": size_map.get("size"),
+                "sku_id": size_map["stockId"],
+                "price": size_map.get("price").replace("$", ""),
+                "previous_price": size_map.get("originalPrice").replace("$", ""),
+                "out_of_stock": int(size_map.get("onHand")) <= 0,
+            })
+        return size_variants
