@@ -16,7 +16,8 @@ class Category(models.Model):
     slug = models.SlugField(unique=True, max_length=256)
     parent = models.ForeignKey(
         "self", on_delete=models.SET_NULL, null=True,
-        blank=True, related_name="subcategories",)
+        blank=True, related_name="subcategories",
+    )
 
     def __str__(self) -> str:
         return f"Category: {self.name}"
@@ -39,8 +40,10 @@ class Product(models.Model):
     brand = models.ForeignKey(
         Brand, on_delete=models.SET_NULL, null=True, blank=True, related_name="products"
     )
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL,
-                                null=True,blank=True,related_name="products",)
+    category = models.ForeignKey(
+        Category, on_delete=models.SET_NULL,
+        null=True,blank=True,related_name="products",
+    )
 
     def __str__(self) -> str:
         return f"Product: {self.name}"
