@@ -2,3 +2,5 @@
 **/weatherfiles
 **/env
 **/__pycache__
+**/*.json
+
