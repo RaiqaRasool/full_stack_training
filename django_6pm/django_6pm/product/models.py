@@ -4,12 +4,26 @@ from django.utils.translation import gettext_lazy as _
 
 class Brand(models.Model):
     name = models.CharField(max_length=256)
-    logo = models.URLField()
+    slug = models.SlugField(unique=True, max_length=256)
+    logo = models.URLField(null=True, blank=True)
+
+    def __str__(self) -> str:
+        return f"Brand: {self.name}"
 
 
 class Category(models.Model):
     name = models.CharField(max_length=256)
-    parent = models.ForeignKey("self", on_delete=models.SET_NULL, null=True, blank=True, related_name="children")
+    slug = models.SlugField(unique=True, max_length=256)
+    parent = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="children",
+    )
+
+    def __str__(self) -> str:
+        return f"Category: {self.name}"
 
 
 class Product(models.Model):
@@ -21,27 +35,55 @@ class Product(models.Model):
         GIRLS = 5, _("girls")
         UNISEX_KIDS = 6, _("unisex-kids")
 
+    retailer_sku = models.PositiveBigIntegerField(primary_key=True)
     name = models.TextField()
     gender = models.IntegerField(choices=Gender.choices)
     description = models.TextField()
     currency = models.CharField(max_length=16)
-    brand = models.ForeignKey(Brand, on_delete=models.SET_NULL, null=True, blank=True, related_name='products')
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name='products')
+    brand = models.ForeignKey(
+        Brand, on_delete=models.SET_NULL, null=True, blank=True, related_name="products"
+    )
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="products",
+    )
+
+    def __str__(self) -> str:
+        return f"Product: {self.name}"
 
 
 class ProductColor(models.Model):
     color = models.CharField(max_length=128)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="colors")
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="colors"
+    )
+
+    def __str__(self) -> str:
+        return f"ProductColor -- Product: {self.product.name}, Color: {self.color}"
 
 
 class ProductColorSize(models.Model):
+    sku_id = models.PositiveBigIntegerField(primary_key=True)
     size = models.CharField(max_length=64)
     price = models.FloatField()
     previous_price = models.FloatField()
     is_in_stock = models.BooleanField(default=True)
-    color = models.ForeignKey(ProductColor, on_delete=models.CASCADE, related_name="sizes")
+    color = models.ForeignKey(
+        ProductColor, on_delete=models.CASCADE, related_name="sizes"
+    )
+
+    def __str__(self) -> str:
+        return f"ProductColorSize -- Product: {self.color.product.name}, Color: {self.color.color}, Size: {self.size}"
 
 
 class ProductColorImage(models.Model):
     image = models.URLField()
-    color = models.ForeignKey(ProductColor, on_delete=models.CASCADE, related_name='images')
+    color = models.ForeignKey(
+        ProductColor, on_delete=models.CASCADE, related_name="images"
+    )
+
+    def __str__(self) -> str:
+        return f"ProductColorImage -- Product: {self.color.product.name}, Color: {self.color.color}, Image: {self.image}"
