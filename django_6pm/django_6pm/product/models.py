@@ -15,12 +15,8 @@ class Category(models.Model):
     name = models.CharField(max_length=256)
     slug = models.SlugField(unique=True, max_length=256)
     parent = models.ForeignKey(
-        "self",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="children",
-    )
+        "self", on_delete=models.SET_NULL, null=True,
+        blank=True, related_name="subcategories",)
 
     def __str__(self) -> str:
         return f"Category: {self.name}"
@@ -36,20 +32,15 @@ class Product(models.Model):
         UNISEX_KIDS = 6, _("unisex-kids")
 
     retailer_sku = models.PositiveBigIntegerField(primary_key=True)
-    name = models.TextField()
+    name = models.CharField(max_length=256)
     gender = models.IntegerField(choices=Gender.choices)
     description = models.TextField()
     currency = models.CharField(max_length=16)
     brand = models.ForeignKey(
         Brand, on_delete=models.SET_NULL, null=True, blank=True, related_name="products"
     )
-    category = models.ForeignKey(
-        Category,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="products",
-    )
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL,
+                                null=True,blank=True,related_name="products",)
 
     def __str__(self) -> str:
         return f"Product: {self.name}"
@@ -62,7 +53,7 @@ class ProductColor(models.Model):
     )
 
     def __str__(self) -> str:
-        return f"ProductColor -- Product: {self.product.name}, Color: {self.color}"
+        return f"{self.product}, Color: {self.color}"
 
 
 class ProductColorSize(models.Model):
@@ -76,7 +67,7 @@ class ProductColorSize(models.Model):
     )
 
     def __str__(self) -> str:
-        return f"ProductColorSize -- Product: {self.color.product.name}, Color: {self.color.color}, Size: {self.size}"
+        return f"{self.color}, Size: {self.size}"
 
 
 class ProductColorImage(models.Model):
@@ -86,4 +77,4 @@ class ProductColorImage(models.Model):
     )
 
     def __str__(self) -> str:
-        return f"ProductColorImage -- Product: {self.color.product.name}, Color: {self.color.color}, Image: {self.image}"
+        return f"{self.color}, Image: {self.image}"
