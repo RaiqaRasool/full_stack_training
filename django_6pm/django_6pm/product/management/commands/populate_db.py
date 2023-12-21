@@ -22,11 +22,11 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser: ArgumentParser) -> None:
         parser.add_argument(
-            "-f", "--filename", type=str, help="Data file path", required=True
+            "-f", "--filepath", type=str, help="Data file path", required=True
         )
 
     def handle(self, *args: dict[str, Any], **kwargs: dict[str, Any]) -> None:
-        items = self.load_data(kwargs["filename"])
+        items = self.load_data(kwargs["filepath"])
         if not items:
             return
 
@@ -41,18 +41,17 @@ class Command(BaseCommand):
                     f"Error! Could not save item no. {idx+1}. Exception: {str(e)}"
                 )
 
-    def load_data(self, filename) -> list[dict[str, Any]]:
-        root_dir = Path(__file__).resolve().parent.parent.parent.parent
-        file_path = os.path.join(root_dir, filename)
-        if not os.path.exists(file_path):
+    def load_data(self, filepath: str) -> list[dict[str, Any]]:
+        items: list[dict[str, Any]] = []
+        if not os.path.exists(filepath):
             self.stderr.write("Given file does not exist")
-            return []
-        with open(file_path, "r") as f:
+            return items
+
+        with open(filepath, "r") as f:
             try:
                 items = json.load(f)
             except json.JSONDecodeError as e:
-                self.stderr.write(f"Error decoding JSON: {str(e)}")
-                return []
+                self.stderr.write(f"Error decoding JSON: {e}")
         self.stdout.write(self.style.SUCCESS(f"Read and parsed JSON data from file"))
         return items
 
