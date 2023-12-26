@@ -1,21 +1,19 @@
 from product.models import ProductColor, ProductColorImage, ProductColorSize
-from product.utils.utils import validate_float, print_status_msg
+from product.utils.utils import print_status_msg, validate_float
 
 
 class ProductSizeImageLoader:
     def __init__(self, items):
         self._items = items
 
-    def get_sku_size(
-        self, data: dict[str, str], color: ProductColor
-    ) -> ProductColorSize:
+    def get_sku_size(self, data: dict[str, str], color: ProductColor) -> ProductColorSize:
         size_variant = ProductColorSize(
             sku_id=int(data["sku_id"]),
-                size=data["size"],
-                color=color,
-                price=validate_float(data["price"]),
-                previous_price=validate_float(data["previous_price"]),
-                is_in_stock=data["out_of_stock"] == "false",
+            size=data["size"],
+            color=color,
+            price=validate_float(data["price"]),
+            previous_price=validate_float(data["previous_price"]),
+            is_in_stock=data["out_of_stock"] == "false",
         )
         return size_variant
 
@@ -24,11 +22,11 @@ class ProductSizeImageLoader:
         return image_obj
 
     def save_sku_size_and_image(self, saved_colors):
-        saved_colors_ids = [{"color": color.color, "retailer_sku": color.product_id} for color in saved_colors] 
+        saved_colors_ids = [{"color": color.color, "retailer_sku": color.product_id} for color in saved_colors]
         db_sizes = ProductColorSize.objects.all()
         db_sizes_ids = [size.sku_id for size in db_sizes]
         db_images = ProductColorImage.objects.select_related().all()
-        db_images_ids = [{"color":image.color, "image":image.image} for image in db_images]
+        db_images_ids = [{"color": image.color, "image": image.image} for image in db_images]
         sizes = []
         sizes_ids = []
         images = []
@@ -47,7 +45,7 @@ class ProductSizeImageLoader:
 
                 for image in value["image_urls"]:
                     image_obj = self.get_sku_image(image, saved_color)
-                    image_id = {"color": image_obj.color, "image": image} 
+                    image_id = {"color": image_obj.color, "image": image}
                     if (image_id not in db_images_ids) and (image_id not in image_ids):
                         images.append(image_obj)
                         image_ids.append(image_id)

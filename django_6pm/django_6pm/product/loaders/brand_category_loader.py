@@ -1,21 +1,20 @@
 from product.models import Brand, Category
 from product.utils.utils import generate_slug, print_status_msg
 
+
 class BrandCategoryLoader:
     def __init__(self, items):
         self._items = items
 
     def get_brand(self, data: dict[str, str]) -> Brand:
         name = data["name"]
-        brand = Brand(
-            slug=generate_slug(name), name=name, logo=data["logo"]
-        )
+        brand = Brand(slug=generate_slug(name), name=name, logo=data["logo"])
         return brand
 
     def get_category(self, categories: list[str]) -> list[Category]:
         categories_objs: list[Category] = []
         for category in categories:
-            category_obj = Category(slug=generate_slug(category), name = category)
+            category_obj = Category(slug=generate_slug(category), name=category)
             categories_objs.append(category_obj)
         return categories_objs
 
@@ -23,7 +22,7 @@ class BrandCategoryLoader:
         brands: list[Brand] = []
         brands_slug: list[str] = []
         categories: list[Category] = []
-        categories_slug: list[str] =[]
+        categories_slug: list[str] = []
         db_brands = Brand.objects.all()
         db_brands_slug = [brand.slug for brand in db_brands]
         db_categories = Category.objects.all()
@@ -45,7 +44,6 @@ class BrandCategoryLoader:
         print_status_msg("Successfully!Saved brands and categories")
         return saved_brands
 
-
     def update_category_parent(self) -> list[Category]:
         updating_categories: list[Category] = []
         updating_categories_ids: list[int] = []
@@ -54,10 +52,10 @@ class BrandCategoryLoader:
 
         for item in self._items:
             product_categories_slug = [generate_slug(category) for category in item["category"]]
-            for i in range(len(product_categories_slug) -1, 0, -1):
+            for i in range(len(product_categories_slug) - 1, 0, -1):
                 category_idx = saved_categories_slug.index(product_categories_slug[i])
-                category =  db_categories[category_idx]
-                parent_idx = saved_categories_slug.index(product_categories_slug[i-1])
+                category = db_categories[category_idx]
+                parent_idx = saved_categories_slug.index(product_categories_slug[i - 1])
                 parent = db_categories[parent_idx]
                 parent_id = db_categories[category_idx].parent_id
                 if (not parent_id) and (category.id not in updating_categories_ids):

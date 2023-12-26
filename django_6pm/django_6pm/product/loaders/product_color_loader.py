@@ -1,6 +1,5 @@
-from product.models import ProductColor, Product
+from product.models import Product, ProductColor
 from product.utils.utils import print_status_msg
-
 
 
 class ProductColorLoader:
@@ -14,7 +13,7 @@ class ProductColorLoader:
     def save_sku_color(self, saved_products):
         saved_products_retailer_sku = [product.retailer_sku for product in saved_products]
         db_colors = ProductColor.objects.all()
-        db_colors_ids = [{"color": color.color, "retailer_sku": color.product_id } for color in db_colors]
+        db_colors_ids = [{"color": color.color, "retailer_sku": color.product_id} for color in db_colors]
         colors: list[ProductColor] = []
         colors_ids = []
         for item in self._items:
@@ -32,4 +31,3 @@ class ProductColorLoader:
 
         print_status_msg("Successfully!Saved products colors")
         return saved_colors
-

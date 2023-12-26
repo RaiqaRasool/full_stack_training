@@ -1,30 +1,29 @@
 from product.models import Product, Category, Brand
 from product.utils.utils import generate_slug, print_status_msg
 
+
 class ProductLoader:
     def __init__(self, items):
         self._items = items
 
-    def get_product(
-        self, item: dict[str, str], brand: Brand, category: Category
-    ) -> Product:
+    def get_product(self, item: dict[str, str], brand: Brand, category: Category) -> Product:
         retailer_sku = int(item["retailer_sku"])
         gender = item["gender"].upper().replace("-", "_")
         product = Product(
             retailer_sku=retailer_sku,
-                name = item["name"],
-                gender = Product.Gender[gender],
-                description = item["description"],
-                currency = item["currency"],
-                brand = brand,
-                category = category,
+            name=item["name"],
+            gender=Product.Gender[gender],
+            description=item["description"],
+            currency=item["currency"],
+            brand=brand,
+            category=category,
         )
         return product
 
     def save_product(self, saved_brands, saved_categories) -> list[Product]:
         saved_brands_slug = [brand.slug for brand in saved_brands]
         saved_categories_slug = [category.slug for category in saved_categories]
-        products: list [Product] = []
+        products: list[Product] = []
         products_retailer_sku: list[int] = []
         db_products = Product.objects.all()
         db_products_retailer_sku: list[int] = [product.retailer_sku for product in db_products]
@@ -48,4 +47,3 @@ class ProductLoader:
 
         print_status_msg("Successfully!Saved products and added parents to categories")
         return saved_products
-
