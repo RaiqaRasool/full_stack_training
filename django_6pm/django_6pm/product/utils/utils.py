@@ -18,3 +18,10 @@ def print_status_msg(msg: str, status: str = "success") -> None:
         print(Color.RED.value + msg + Color.RESET.value)
     else:
         print(Color.GREEN.value + msg + Color.RESET.value)
+
+
+def generate_mapping(data, key):
+    data_mapping = {}
+    for item in data:
+        data_mapping[getattr(item, key)] = item
+    return data_mapping

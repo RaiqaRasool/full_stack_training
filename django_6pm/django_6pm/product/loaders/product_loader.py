@@ -1,5 +1,7 @@
-from product.models import Product, Category, Brand
-from product.utils.utils import generate_slug, print_status_msg
+from django.db.models import BaseManager
+
+from product.models import Brand, Category, Product
+from product.utils.utils import generate_mapping, generate_slug, print_status_msg
 
 
 class ProductLoader:
@@ -20,30 +22,28 @@ class ProductLoader:
         )
         return product
 
-    def save_product(self, saved_brands, saved_categories) -> list[Product]:
-        saved_brands_slug = [brand.slug for brand in saved_brands]
-        saved_categories_slug = [category.slug for category in saved_categories]
-        products: list[Product] = []
-        products_retailer_sku: list[int] = []
+    def save_product(
+        self, saved_brands: BaseManager[Brand], saved_categories: BaseManager[Category]
+    ) -> BaseManager[Product]:
+        saved_brands_mapping = generate_mapping(saved_brands, "slug")
+        saved_categories_mapping = generate_mapping(saved_categories, "slug")
+        products_mapping = {}
         db_products = Product.objects.all()
-        db_products_retailer_sku: list[int] = [product.retailer_sku for product in db_products]
+        db_products_mapping = generate_mapping(db_products, "retailer_sku")
         for item in self._items:
             product_categories_slug = [generate_slug(category) for category in item["category"]]
-            saved_category_idx = saved_categories_slug.index(product_categories_slug[-1])
-            category = saved_categories[saved_category_idx]
+            category = saved_categories_mapping[product_categories_slug[-1]]
 
             brand_slug = generate_slug(item["brand"]["name"])
-            saved_brand_idx = saved_brands_slug.index(brand_slug)
-            brand = saved_brands[saved_brand_idx]
+            brand = saved_brands_mapping[brand_slug]
 
             retailer_sku = int(item["retailer_sku"])
 
-            if (retailer_sku not in db_products_retailer_sku) and (retailer_sku not in products_retailer_sku):
-                products.append(self.get_product(item, brand, category))
-                products_retailer_sku.append(retailer_sku)
+            if (retailer_sku not in db_products_mapping) and (retailer_sku not in products_mapping):
+                products_mapping[retailer_sku] = self.get_product(item, brand, category)
 
-        Product.objects.bulk_create(products)
-        saved_products = Product.objects.all()
-
+        Product.objects.bulk_create(products_mapping.values())
         print_status_msg("Successfully!Saved products and added parents to categories")
+
+        saved_products = Product.objects.all()
         return saved_products

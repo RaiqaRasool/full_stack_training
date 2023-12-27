@@ -26,6 +26,14 @@ class Category(models.Model):
         return f"Category: {self.name}"
 
 
+class Color(models.Model):
+    color_id = models.PositiveBigIntegerField(primary_key=True)
+    color = models.CharField(max_length=128)
+
+    def __str__(self) -> str:
+        return f"Color: {self.color}"
+
+
 class Product(models.Model):
     class Gender(models.IntegerChoices):
         WOMEN = 1, _("women")
@@ -53,21 +61,14 @@ class Product(models.Model):
         return f"Product: {self.name}"
 
 
-class ProductColor(models.Model):
-    color = models.CharField(max_length=128)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="colors")
-
-    def __str__(self) -> str:
-        return f"{self.product}, Color: {self.color}"
-
-
 class ProductColorSize(models.Model):
     sku_id = models.PositiveBigIntegerField(primary_key=True)
     size = models.CharField(max_length=64)
     price = models.FloatField()
     previous_price = models.FloatField()
     is_in_stock = models.BooleanField(default=True)
-    color = models.ForeignKey(ProductColor, on_delete=models.CASCADE, related_name="sizes")
+    color = models.ForeignKey(Color, on_delete=models.SET_NULL, null=True, blank=True, related_name="sizes")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="sizes")
 
     def __str__(self) -> str:
         return f"{self.color}, Size: {self.size}"
@@ -75,7 +76,8 @@ class ProductColorSize(models.Model):
 
 class ProductColorImage(models.Model):
     image = models.URLField()
-    color = models.ForeignKey(ProductColor, on_delete=models.CASCADE, related_name="images")
+    color = models.ForeignKey(Color, on_delete=models.SET_NULL, null=True, blank=True, related_name="images")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images")
 
     def __str__(self) -> str:
         return f"{self.color}, Image: {self.image}"

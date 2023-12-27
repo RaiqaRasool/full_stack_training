@@ -9,7 +9,7 @@ class DataLoader:
         self.filepath = filepath
         self.items = []
 
-    def load_data(self):
+    def load_data(self) -> list[dict]:
         if not os.path.exists(self.filepath):
             print_status_msg("Given file does not exist", status="error")
             return self.items

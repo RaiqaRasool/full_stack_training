@@ -77,7 +77,7 @@ WSGI_APPLICATION = "django_6pm.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "db_6pm",
+        "NAME": "db_6pm_test",
         "USER": "postgres",
         "PASSWORD": "",
         "HOST": "localhost",
