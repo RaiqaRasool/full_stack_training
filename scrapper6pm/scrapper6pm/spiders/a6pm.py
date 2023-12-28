@@ -74,12 +74,14 @@ class A6pmSpider(CrawlSpider):
 
         for color_version in color_versions:
             color = color_version.get("color")
+            color_id = color_version.get("colorId")
             raw_size_variants = color_version.get("stocks")
             images = color_version.get("images")
             image_urls = [
                 f'https://m.media-amazon.com/images/I/{image["imageId"]}._AC_SR146,116_.jpg' for image in images
             ]
             skus_data[color] = {
+                "color_id": color_id, 
                 "image_urls": image_urls,
                 "size_versions": self.get_size_variants(raw_size_variants)
                 }
