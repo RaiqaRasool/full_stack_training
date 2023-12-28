@@ -1,4 +1,4 @@
-from django.db.models import BaseManager
+from django.db.models.query import QuerySet
 
 from product.models import Brand, Category, Product
 from product.utils.utils import generate_mapping, generate_slug, print_status_msg
@@ -23,8 +23,8 @@ class ProductLoader:
         return product
 
     def save_product(
-        self, saved_brands: BaseManager[Brand], saved_categories: BaseManager[Category]
-    ) -> BaseManager[Product]:
+        self, saved_brands: QuerySet[Brand], saved_categories: QuerySet[Category]
+    ) -> QuerySet[Product]:
         saved_brands_mapping = generate_mapping(saved_brands, "slug")
         saved_categories_mapping = generate_mapping(saved_categories, "slug")
         products_mapping = {}

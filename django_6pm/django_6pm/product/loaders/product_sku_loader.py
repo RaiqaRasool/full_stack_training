@@ -1,4 +1,4 @@
-from django.db.models import BaseManager
+from django.db.models.query import QuerySet
 
 from product.models import Color, Product, ProductColorImage, ProductColorSize
 from product.utils.utils import generate_mapping, print_status_msg, validate_float
@@ -24,7 +24,7 @@ class ProductSkuLoader:
         image_obj = ProductColorImage(image=image, color=color, product=product)
         return image_obj
 
-    def save_sku(self, saved_products: BaseManager[Product], saved_colors: BaseManager[Color]) -> None:
+    def save_sku(self, saved_products: QuerySet[Product], saved_colors: QuerySet[Color]) -> None:
         saved_products_mapping = generate_mapping(saved_products, "retailer_sku")
         saved_colors_mapping = generate_mapping(saved_colors, "color_id")
         db_images = ProductColorImage.objects.all()

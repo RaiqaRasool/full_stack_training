@@ -1,4 +1,4 @@
-from django.db.models import BaseManager
+from django.db.models.query import QuerySet
 
 from product.models import Brand, Category, Color
 from product.utils.utils import generate_mapping, generate_slug, print_status_msg
@@ -27,7 +27,7 @@ class BrandCategoryColorLoader:
             color_objs.append(color_obj)
         return color_objs
 
-    def save_brand_category_color(self) -> tuple[BaseManager[Brand], BaseManager[Color]]:
+    def save_brand_category_color(self) -> tuple[QuerySet[Brand], QuerySet[Color]]:
         brands_mapping = {}
         categories_mapping = {}
         db_brands = Brand.objects.all()
@@ -63,7 +63,7 @@ class BrandCategoryColorLoader:
         saved_colors = Color.objects.all()
         return saved_brands, saved_colors
 
-    def update_category_parent(self) -> BaseManager[Category]:
+    def update_category_parent(self) -> QuerySet[Category]:
         updating_categories_mapping = {}
         db_categories = Category.objects.all()
         db_categories_mapping = generate_mapping(db_categories, "slug")
