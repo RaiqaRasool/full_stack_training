@@ -24,7 +24,7 @@ class Category(models.Model):
 
 
 class Color(models.Model):
-    color_id = models.PositiveBigIntegerField(primary_key=True)
+    id = models.PositiveBigIntegerField(primary_key=True)
     color = models.CharField(max_length=128)
 
     def __str__(self) -> str:
