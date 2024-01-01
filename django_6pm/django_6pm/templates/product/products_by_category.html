@@ -1,0 +1,27 @@
+{% extends 'product/product_list.html' %}
+
+{% block header %}
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="{% url 'categories' %}">All Categories</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">{{ category.name }}</li>
+    </ol>
+  </nav>
+  <h1 class="text-center">{{ category.name }}</h1>
+{% endblock %}
+{% block footer %}
+  {% if subcategories %}
+    <div class="d-flex justify-content-center align-items-center flex-column">
+      <h2 class="my-5">Subcategories</h2>
+      <ul class="list-group overflow-auto" style="width: 60vw;">
+        {% for category in subcategories %}
+          <li class="list-group-item">
+            <a href="{% url 'category_products' category.slug %}">{{ category.name }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+{% endblock %}

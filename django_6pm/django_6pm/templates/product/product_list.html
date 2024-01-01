@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block basecontent %}
+  {% block header %}
+
+  {% endblock %}
+
+  {% if products %}
+    <p class="text-center">{{ total_products }} items found</p>
+    <div class="d-flex flex-wrap justify-content-center">
+      {% for product in products %}
+        <div class="card m-2" style="width: 18rem;" id="{{ product.retiler_sku }}">
+          <img class="card-img-top" src="{{ product.images.first.image }}" alt="Card image cap" />
+          <div class="card-body">
+            <h5 class="card-title"><a href="{% url 'product' product.pk %}">{{ product.name }}</a></h5>
+            <p class="card-text">
+              Brand: <a href="{% url 'brand_products' product.brand.slug %}">{{ product.brand.name }}</a>
+            </p>
+            <p class="m-0">Price: {{ product.sizes.first.price }} {{ product.currency }}</p>
+            <small class="text-muted">MSRP: {{ product.sizes.first.previous_price }} {{ product.currency }}</small>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="d-flex justify-content-center mt-5">
+      <nav aria-label="Page navigation">
+        {% if is_paginated %}
+          <ul class="pagination">
+            {% if page_obj.has_previous %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo;</a>
+              </li>
+            {% else %}
+              <li class="page-item disabled">
+                <a class="page-link" href="#">&laquo;</a>
+              </li>
+            {% endif %}
+            {% if page_obj.has_previous %}
+              <li class="page-item">
+                <a class="page-link active">{{ page_obj.number|add:'-1' }}</a>
+              </li>
+            {% endif %}
+            <li class="page-item">
+              <a class="page-link active">{{ page_obj.number }}</a>
+            </li>
+            {% if page_obj.has_next %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ i }}">{{ page_obj.number|add:'+1' }}</a>
+              </li>
+            {% endif %}
+            {% if page_obj.has_next %}
+              <li class="page-item">
+                <a href="?page={{ page_obj.next_page_number }}" class="page-link">&raquo;</a>
+              </li>
+            {% else %}
+              <li class="page-item disabled">
+                <a class="page-link">&raquo;</a>
+              </li>
+            {% endif %}
+          </ul>
+        {% endif %}
+      </nav>
+    </div>
+  {% else %}
+    <div class="text-center mt-5">No item found</div>
+  {% endif %}
+
+  {% block footer %}
+
+  {% endblock %}
+{% endblock %}
