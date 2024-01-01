@@ -1,0 +1,13 @@
+{% extends 'product/product_list.html' %}
+
+{% block header %}
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="{% url 'brands' %}">All Brands</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">{{ brand.name }}</li>
+    </ol>
+  </nav>
+  <h1 class="text-center">{{ brand.name }}</h1>
+{% endblock %}

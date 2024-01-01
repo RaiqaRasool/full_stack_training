@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block basecontent %}
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="{% url 'categories' %}">All Categories</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{% url 'category_products' product.category.slug %}">{{ product.category.name }}</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+    </ol>
+  </nav>
+  <div class="container mt-5 mb-5">
+    <div class="row d-flex justify-content-center">
+      <div class="col-md-10">
+        <div class="card">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="images p-3">
+                <div class="text-center p-4">
+                  <img id="main-image" src="{{ product.images.first.image }}" width="250" />
+                </div>
+                <div class="thumbnail text-center">
+                  {% for image in product.images.all %}
+                    <img onclick="change_image(this)" src="{{ image.image }}" width="70" />
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="product p-4">
+                <div class="mt-4 mb-3">
+                  <span class="text-uppercase text-muted brand"><a href="{% url 'brand_products' product.brand.slug %}">{{ product.brand.name }}</a></span>
+                  <h5 class="text-uppercase">{{ product.name }}</h5>
+                  <div class="price d-flex flex-row align-items-center">
+                    <span class="act-price">${{ product.sizes.first.price }}</span>
+                    <div class="ml-2">
+                      <small class="dis-price">${{ product.sizes.first.previous_price }}</small>
+                    </div>
+                  </div>
+                </div>
+                <p class="about">{{ product.description|safe }}</p>
+                <div class="sizes mt-5">
+                  <h6 class="text-uppercase">Size</h6>
+                  {% for size in product.sizes.all %}
+                    <label class="radio">
+                      <input type="radio" name="size" value="{{ size.sku_id }}" checked />
+                      <span><b>Size:</b> {{ size.size }} - <b>Color:</b> {{ size.color.color }}</span>
+                    </label>
+                  {% endfor %}
+                </div>
+                <div class="cart mt-4 align-items-center">
+                  <button class="btn btn-danger text-uppercase mr-2 px-4">Add to cart</button> <i class="fa fa-heart text-muted"></i> <i class="fa fa-share-alt text-muted"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block basescript %}
+  <script>
+    function change_image(image) {
+      var container = document.getElementById('main-image')
+      container.src = image.src
+    }
+    document.addEventListener('DOMContentLoaded', function (event) {})
+  </script>
+{% endblock %}
