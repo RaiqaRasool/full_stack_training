@@ -23,6 +23,14 @@ class Category(models.Model):
         return f"Category: {self.name}"
 
 
+class Color(models.Model):
+    id = models.PositiveBigIntegerField(primary_key=True)
+    color = models.CharField(max_length=128)
+
+    def __str__(self) -> str:
+        return f"Color: {self.color}"
+
+
 class Product(models.Model):
     class Gender(models.IntegerChoices):
         WOMEN = 1, _("women")
@@ -37,26 +45,14 @@ class Product(models.Model):
     gender = models.IntegerField(choices=Gender.choices)
     description = models.TextField()
     currency = models.CharField(max_length=16)
-    brand = models.ForeignKey(
-        Brand, on_delete=models.SET_NULL, null=True, blank=True, related_name="products"
-    )
+    brand = models.ForeignKey(Brand, on_delete=models.SET_NULL, null=True, blank=True, related_name="products")
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL,
-        null=True,blank=True,related_name="products",
+        null=True, blank=True, related_name="products",
     )
 
     def __str__(self) -> str:
         return f"Product: {self.name}"
-
-
-class ProductColor(models.Model):
-    color = models.CharField(max_length=128)
-    product = models.ForeignKey(
-        Product, on_delete=models.CASCADE, related_name="colors"
-    )
-
-    def __str__(self) -> str:
-        return f"{self.product}, Color: {self.color}"
 
 
 class ProductColorSize(models.Model):
@@ -65,9 +61,8 @@ class ProductColorSize(models.Model):
     price = models.FloatField()
     previous_price = models.FloatField()
     is_in_stock = models.BooleanField(default=True)
-    color = models.ForeignKey(
-        ProductColor, on_delete=models.CASCADE, related_name="sizes"
-    )
+    color = models.ForeignKey(Color, on_delete=models.SET_NULL, null=True, blank=True, related_name="sizes")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="sizes")
 
     def __str__(self) -> str:
         return f"{self.color}, Size: {self.size}"
@@ -75,9 +70,8 @@ class ProductColorSize(models.Model):
 
 class ProductColorImage(models.Model):
     image = models.URLField()
-    color = models.ForeignKey(
-        ProductColor, on_delete=models.CASCADE, related_name="images"
-    )
+    color = models.ForeignKey(Color, on_delete=models.SET_NULL, null=True, blank=True, related_name="images")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images")
 
     def __str__(self) -> str:
         return f"{self.color}, Image: {self.image}"
