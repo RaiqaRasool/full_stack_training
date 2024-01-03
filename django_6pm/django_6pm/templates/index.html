@@ -1,8 +1,0 @@
-{% if request.user.is_authenticated %}
-<p>{{ request.user.username }} you are logged in. Click <a href="{% url 'logout' %}">Logout</a> to logout</p>
-{% else %}
-<a href="{% url 'login' %}">Login</a>
-<a href="{%  url 'signup' %}">Signup</a>
-{% endif %}
-
-<h1>Welcome!</h1>

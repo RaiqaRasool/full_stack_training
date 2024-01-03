@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block basecontent %}
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div class="well well-sm">
+          <div class="row">
+            <div class="col-sm-6 col-md-4">
+              {% if profile.avatar %}
+                <img src="{{ MEDIA_URL }}{{ profile.avatar.url }}" alt="{{ request.user.username }}" class="img-rounded img-responsive" />
+              {% else %}
+                <img src="http://placehold.it/380x500" alt="" class="img-rounded img-responsive" />
+              {% endif %}
+            </div>
+            <div class="col-sm-6 col-md-8">
+              <h4>{{ request.user.first_name }} {{ request.user.last_name }} <small>@{{ request.user.username }}</small></h4>
+              <p>
+                <i class="glyphicon glyphicon-envelope"></i> {{ request.user.email }}
+                <br />
+                <b>Joining date:</b> {{ request.user.date_joined|date }}
+              </p>
+              <b>Bio:</b> <p>{{ profile.bio }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

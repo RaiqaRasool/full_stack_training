@@ -1,12 +1,11 @@
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.models import User
+from django.contrib.auth.views import LoginView
+from django.db.models import QuerySet
 from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
 
 from user.forms import ProfileForm, UserForm
-
-
-def index(request):
-    return render(request, "index.html")
+from user.models import Profile
 
 
 class SignUpTemplateView(TemplateView):
@@ -34,5 +33,5 @@ class UserLoginView(LoginView):
     template_name = "user/login.html"
 
 
-class UserLogoutView(LogoutView):
-    template_name = "user/logout.html"
+class UserProfileView(TemplateView):
+    template_name = "user/profile.html"
