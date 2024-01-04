@@ -139,3 +139,6 @@ MEDIA_ROOT = BASE_DIR / MEDIA_URL
 
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
+
+# Number of products each list in homepage will have
+HOMEPAGE_PRODUCTS_PER_LIST = 4

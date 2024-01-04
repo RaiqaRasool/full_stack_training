@@ -1,6 +1,7 @@
 import json
 from typing import Any, Dict
 
+from django.conf import settings
 from django.db.models import Count, QuerySet
 from django.shortcuts import get_object_or_404
 from django.views.generic import DetailView, ListView
@@ -15,13 +16,16 @@ class HomeListView(ListView):
 
     def get_category_products(self, cat, products):
         subcats = list(cat.subcategories.all())
-        if subcats is None or len(products) >= 4:
+        products_limit = settings.HOMEPAGE_PRODUCTS_PER_LIST
+        if subcats is None or len(products) >= products_limit:
             return products
         for subcat in subcats:
-            subcat_prods = list(subcat.products.select_related().prefetch_related("images", "sizes")[:4])
+            subcat_prods = list(
+                subcat.products.select_related("brand", "category").prefetch_related("images", "sizes")[:products_limit]
+            )
             if subcat_prods:
                 products.extend(subcat_prods)
-            if len(products) >= 4:
+            if len(products) >= products_limit:
                 return products
             products = self.get_category_products(subcat, products)
         return products
@@ -34,16 +38,16 @@ class HomeListView(ListView):
         return category_product_mapping
 
     def get_genders(self):
-        gender_queryset = Product.objects.values("gender").order_by("gender").distinct()
-        gender_values = [item["gender"] for item in gender_queryset]
-        return gender_values
+        return Product.objects.order_by("gender").distinct().values_list("gender", flat=True)
 
     def get_genders_products(self):
         genders = self.get_genders()
         gender_products_mapping = {}
         for gender in genders:
             gender_products_mapping[Product.Gender(gender).label] = (
-                Product.objects.filter(gender=gender).select_related().prefetch_related("sizes", "images")[0:4]
+                Product.objects.filter(gender=gender)
+                .select_related("brand", "category")
+                .prefetch_related("sizes", "images")[0 : settings.HOMEPAGE_PRODUCTS_PER_LIST]
             )
         return gender_products_mapping
 
@@ -56,10 +60,7 @@ class HomeListView(ListView):
 
 class CategoriesListView(ListView):
     context_object_name = "categories"
-
-    def get_queryset(self) -> QuerySet[Any]:
-        categories = Category.objects.filter(parent_id=None)
-        return categories
+    queryset = Category.objects.filter(parent_id=None)
 
 
 class BrandsListView(ListView):
@@ -146,7 +147,9 @@ class ProductDetailView(DetailView):
 
     def get_queryset(self):
         self.product = (
-            Product.objects.filter(retailer_sku=self.kwargs["pk"]).select_related().prefetch_related("images", "sizes")
+            Product.objects.filter(retailer_sku=self.kwargs["pk"])
+            .select_related("brand", "category")
+            .prefetch_related("images", "sizes")
         )
         return self.product
 
