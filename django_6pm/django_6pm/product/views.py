@@ -1,3 +1,4 @@
+import json
 from typing import Any, Dict
 
 from django.db.models import Count, QuerySet
@@ -125,7 +126,35 @@ class CategoryProductListView(ListView):
 class ProductDetailView(DetailView):
     context_object_name = "product"
 
+    def get_color_sizes_mapping(self):
+        color_sizes_mapping = {}
+        for size in self.product.first().sizes.all():
+            if size.color not in color_sizes_mapping:
+                color_sizes_mapping[size.color] = [size]
+            else:
+                color_sizes_mapping[size.color].append(size)
+        self.colors = list(color_sizes_mapping.keys())
+        return color_sizes_mapping
+
+    def get_color_images_mapping(self):
+        color_images_mapping = {}
+        for color in self.colors:
+            color_images_mapping[color.id] = []
+        for image in self.product.first().images.all():
+            color_images_mapping[image.color_id].append(image.image)
+        return color_images_mapping
+
     def get_queryset(self):
-        return (
+        self.product = (
             Product.objects.filter(retailer_sku=self.kwargs["pk"]).select_related().prefetch_related("images", "sizes")
         )
+        return self.product
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["color_sizes_mapping"] = self.get_color_sizes_mapping()
+        color_images_mapping = self.get_color_images_mapping()
+        context["color_images_mapping"] = json.dumps(color_images_mapping)
+        default_color = self.colors[0].id
+        context["default_images"] = color_images_mapping[default_color]
+        return context
