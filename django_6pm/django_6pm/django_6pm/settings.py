@@ -128,3 +128,7 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# Number of products each list in homepage will have
+HOMEPAGE_PRODUCTS_PER_LIST = 4
