@@ -24,9 +24,9 @@
                 <div class="text-center p-4">
                   <img id="main-image" src="{{ product.images.first.image }}" width="250" />
                 </div>
-                <div class="thumbnail text-center">
-                  {% for image in product.images.all %}
-                    <img onclick="change_image(this)" src="{{ image.image }}" width="70" />
+                <div class="thumbnail text-center" id="thumbnail-container">
+                  {% for image in default_images %}
+                    <img class="thumbnail-image" onclick="change_main_image(this)" src="{{ image }}" width="70" />
                   {% endfor %}
                 </div>
               </div>
@@ -45,12 +45,18 @@
                 </div>
                 <p class="about">{{ product.description|safe }}</p>
                 <div class="sizes mt-5">
-                  <h6 class="text-uppercase">Size</h6>
-                  {% for size in product.sizes.all %}
-                    <label class="radio">
-                      <input type="radio" name="size" value="{{ size.sku_id }}" checked />
-                      <span><b>Size:</b> {{ size.size }} - <b>Color:</b> {{ size.color.color }}</span>
-                    </label>
+                  {% for color, sizes in color_sizes_mapping.items %}
+                    <h6>Color: <b>{{ color.color }}</b></h6>
+                    {% for size in sizes %}
+                      <label class="radio">
+                        {% if forloop.parentloop.first and forloop.first %}
+                          <input type="radio" name="size" value="{{ size.sku_id }}" data-color="{{ color.id }}" onclick="change_images(event)" checked />
+                        {% else %}
+                          <input type="radio" name="size" value="{{ size.sku_id }}" data-color="{{ color.id }}" onclick="change_images(event)" />
+                        {% endif %}
+                        <span>{{ size.size }}</span>
+                      </label>
+                    {% endfor %}
                   {% endfor %}
                 </div>
                 <div class="cart mt-4 align-items-center">
@@ -66,9 +72,33 @@
 {% endblock %}
 {% block basescript %}
   <script>
-    function change_image(image) {
+    var colorImagesMapping = JSON.parse('{{color_images_mapping|escapejs}}')
+    var previousColor = null
+    function change_main_image(image) {
       var container = document.getElementById('main-image')
       container.src = image.src
+    }
+    function change_images(event) {
+      var currColor = event.target.getAttribute('data-color')
+      if (currColor === previousColor) {
+        return
+      }
+      var main_image = document.getElementById('main-image')
+      main_image.src = colorImagesMapping[currColor][0]
+      var thumbnailContainer = document.getElementById('thumbnail-container')
+      thumbnailContainer.innerHTML = ''
+      colorImagesMapping[currColor].forEach(function (imageURL) {
+        var thumbnailImage = document.createElement('img')
+        thumbnailImage.className = 'thumbnail-image'
+        thumbnailImage.src = imageURL
+        thumbnailImage.width = 70
+        thumbnailImage.onclick = function () {
+          change_images(event)
+        }
+        thumbnailContainer.appendChild(thumbnailImage)
+      })
+    
+      previousColor = currColor
     }
     document.addEventListener('DOMContentLoaded', function (event) {})
   </script>
