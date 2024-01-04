@@ -67,6 +67,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "product.context_processors.navbar_data"
                 "user.context_processors.profile"
             ],
         },
@@ -131,6 +132,9 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Number of products each list in homepage will have
+HOMEPAGE_PRODUCTS_PER_LIST = 4
 
 # Media files
 MEDIA_URL = "media/"
