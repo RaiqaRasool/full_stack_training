@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from user.models import User
 
 
 class Brand(models.Model):
@@ -46,6 +47,8 @@ class Product(models.Model):
     description = models.TextField()
     currency = models.CharField(max_length=16)
     brand = models.ForeignKey(Brand, on_delete=models.SET_NULL, null=True, blank=True, related_name="products")
+    is_featured = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL,
         null=True, blank=True, related_name="products",
@@ -75,3 +78,19 @@ class ProductColorImage(models.Model):
 
     def __str__(self) -> str:
         return f"{self.color}, Image: {self.image}"
+
+
+class SkuSubscription(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="subscriptions")
+    sku = models.ForeignKey(ProductColorSize, on_delete=models.CASCADE, related_name="subscriptions")
+    email = models.EmailField(max_length=256)
+    subscribed_at = models.DateField(auto_now_add=True) 
+
+    class Meta:
+        unique_together = ["user", "sku"]
+
+    def save(self, *args, **kwargs) -> None:
+        existing_subscription = SkuSubscription.objects.filter(user=self.user, sku=self.sku).exists()
+        if not existing_subscription:
+            super().save(*args, **kwargs)
+
