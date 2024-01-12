@@ -14,7 +14,7 @@ class ProductSkuLoader:
             size=data["size"],
             price=validate_float(data["price"]),
             previous_price=validate_float(data["previous_price"]),
-            is_in_stock=data["out_of_stock"] == "false",
+            is_in_stock=not data["out_of_stock"],
             color=color,
             product=product,
         )
