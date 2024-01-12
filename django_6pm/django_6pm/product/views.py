@@ -274,3 +274,4 @@ class SkuSubscriptionCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self) -> str:
         return reverse_lazy("product", args=[self.kwargs["pk"]])
+

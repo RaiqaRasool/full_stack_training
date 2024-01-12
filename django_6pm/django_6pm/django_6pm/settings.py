@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "product",
     "user",
+    "django_celery_results",
+    "django.contrib.sites"
 ]
 
 MIDDLEWARE = [
@@ -67,8 +69,8 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "user.context_processors.profile",
-                "product.context_processors.navbar_data"
+                "product.context_processors.navbar_data",
+                "user.context_processors.profile"
             ],
         },
     },
@@ -133,6 +135,9 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Number of products each list in homepage will have
+HOMEPAGE_PRODUCTS_PER_LIST = 4
+
 # Media files
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / MEDIA_URL
@@ -140,5 +145,27 @@ MEDIA_ROOT = BASE_DIR / MEDIA_URL
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
-# Number of products each list in homepage will have
-HOMEPAGE_PRODUCTS_PER_LIST = 4
+
+# SMTP SETTINGS
+EMAIL_BACKEND = env('EMAIL_BACKEND')
+EMAIL_HOST = env('EMAIL_HOST')
+EMAIL_PORT = env('EMAIL_PORT')
+EMAIL_USE_SSL = env('EMAIL_USE_SSL')
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = env('EMAIL_HOST_USER')
+EMAIL_DEBUG = True
+
+
+
+
+# CELERY SETTINGS
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
+CELERY_ACCEPT_CONTENT = {'application/json'}
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Europe/Paris'
+CELERY_RESULT_BACKEND = 'django-db'
+
+
+SITE_ID = 2
