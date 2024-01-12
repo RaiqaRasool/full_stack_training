@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block basecontent %}
+  <form method="post">
+    {% csrf_token %}
+    <h1>Product Details</h1>
+    {{ form.as_p }}
+    <h1>Product Sizes</h1>
+    {{ product_color_size_formset.management_form }}
+    <div class="d-flex flex-column">
+      {% for form in product_color_size_formset %}
+        <div class="d-flex">{{ form.as_table }}</div>
+        <br />
+        <br />
+      {% endfor %}
+    </div>
+    <div class="w-100 d-flex justify-content-center align-items-center">
+      <input type="submit" class="btn btn-primary w-50" value="Update" />
+    </div>
+  </form>
+{% endblock %}

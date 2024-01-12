@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Back in Stock Notification</title>
+  </head>
+  <body>
+    <p>Hello !!!</p>
+
+    <p>We're excited to let you know that the product you subscribed to is back in stock!</p>
+
+    <p>Product Details:</p>
+    <ul>
+      <li>
+        <strong>Product Name:</strong> {{ product_name }}
+      </li>
+      <li>
+        <strong>Product URL:</strong> <a href="{{ product_url }}">{{ product_name }}</a>
+      </li>
+    </ul>
+    <p>Product Subscribed SKU Details:</p>
+    <ul>
+      <li>
+        <strong>Color:</strong> {{ sku_color }}
+      </li>
+      <li>
+        <strong>Size:</strong> {{ sku_size }}
+      </li>
+    </ul>
+
+    <p>Thank you for using our service!</p>
+
+    <p>
+      Best regards,<br />
+      6pm Clone
+    </p>
+  </body>
+</html>
