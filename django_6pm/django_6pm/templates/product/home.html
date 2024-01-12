@@ -3,6 +3,19 @@
 {% block basecontent %}
   <div class="mx-5">
     <div>
+      {% if featured_products %}
+        <div class="d-flex justify-content-between align-items-center">
+          <h2>Featured Products</h2>
+          <a href="{% url 'featured_products' %}">See All</a>
+        </div>
+        <div class="d-flex flex-wrap justify-content-center">
+          {% for product in featured_products %}
+            {% include 'product/product_card.html' %}
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+    <div>
       <p class="display-1">Categories</p>
       {% if category_products_mapping %}
         {% for category, products in category_products_mapping.items %}
