@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block basecontent %}
+  <div class="d-flex justify-content-center align-items-center flex-column">
+    <h2 class="my-5">Categories</h2>
+    <ul class="list-group overflow-auto" style="width: 60vw;">
+      {% for category in categories %}
+        <li class="list-group-item">
+          <a href="{% url 'category_products' category.slug %}">{{ category.name }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endblock %}

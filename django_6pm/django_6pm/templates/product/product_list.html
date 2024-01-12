@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block basecontent %}
+  {% block header %}
+
+  {% endblock %}
+
+  {% if products %}
+    <p class="text-center">{{ total_products }} items found</p>
+    <div class="d-flex flex-wrap justify-content-center">
+      {% for product in products %}
+        {% include 'product/product_card.html' %}
+      {% endfor %}
+    </div>
+    {% include 'product/product_pagination.html' %}
+  {% else %}
+    <div class="text-center mt-5">No item found</div>
+  {% endif %}
+
+  {% block footer %}
+
+  {% endblock %}
+{% endblock %}

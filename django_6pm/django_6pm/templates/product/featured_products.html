@@ -1,0 +1,12 @@
+{% extends 'product/product_list.html' %}
+
+{% block header %}
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="{% url 'home' %}">Home</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">Featured Products</li>
+    </ol>
+  </nav>
+{% endblock %}

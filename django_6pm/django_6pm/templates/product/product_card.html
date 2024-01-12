@@ -1,0 +1,11 @@
+<div class="card m-2" style="width: 18rem;" id="{{ product.retailer_sku }}">
+  <img class="card-img-top" src="{{ product.images.first.image }}" alt="Card image cap" />
+  <div class="card-body">
+    <h5 class="card-title"><a href="{% url 'product' product.pk %}">{{ product.name }}</a></h5>
+    <p class="card-text">
+      Brand: <a href="{% url 'brand_products' product.brand.slug %}">{{ product.brand.name }}</a>
+    </p>
+    <p class="m-0">Price: {{ product.sizes.first.price }} {{ product.currency }}</p>
+    <small class="text-muted">MSRP: {{ product.sizes.first.previous_price }} {{ product.currency }}</small>
+  </div>
+</div>

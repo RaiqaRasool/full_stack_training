@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block basecontent %}
+  <div class="d-flex flex-column align-items-center justify-content-center">
+    {% if product %}
+      <form method="post">
+        {% csrf_token %}
+        <p>
+          Are you sure you want to delete product <a href="{% url 'product' product.retailer_sku %}">{{ product.name }}</a>?
+        </p>
+        <br />
+        <input type="submit" class="btn btn-danger" value="Delete" />
+      </form>
+    {% endif %}
+  </div>
+{% endblock %}
