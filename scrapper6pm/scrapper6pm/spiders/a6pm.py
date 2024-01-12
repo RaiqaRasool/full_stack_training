@@ -40,6 +40,8 @@ class A6pmSpider(CrawlSpider):
 
     def extract_item_gender(self, response) -> str:
         keywords = response.css('meta[name="keywords"]::attr(content)').get().lower()
+        keywords = keywords.split(', ')
+         
         if "women" in keywords and "men" not in keywords:
             gender = "women"
         elif "men" in keywords and "women" not in keywords:
